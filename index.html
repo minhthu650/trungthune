@@ -215,7 +215,7 @@ imgSources.forEach((src, index) => {
       img.src = src;
       img.style.left = Math.random() * 90 + "vw";
       img.style.top = "-80px";
-      img.style.width = (40 + Math.random() * 50) + "px";
+      img.style.width = (100 + Math.random() * 80) + "px";
       document.body.appendChild(img);
       setTimeout(() => img.remove(), 7000);
     }, (index * 2000) + (i * 10000)); 
@@ -224,7 +224,7 @@ imgSources.forEach((src, index) => {
 });
   </script>
   <video id="bg-video" autoplay loop style="display:none">
-  <source src="./ms/nh.mp4" type="video/mp4">
+
 </video>
 
 <script>
