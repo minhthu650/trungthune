@@ -223,22 +223,7 @@ imgSources.forEach((src, index) => {
   }
 });
   </script>
-  <video id="bg-video" autoplay loop style="display:none">
-
-</video>
-
-<script>
-  window.addEventListener("load", () => {
-    const video = document.getElementById("bg-video");
-    // Thử phát ngay khi load
-    video.play().catch(() => {
-      // Nếu bị chặn thì phát khi người dùng click
-      document.body.addEventListener("click", () => {
-        video.play();
-      }, {once:true});
-    });
-  });
-</script>
+ 
 
 <script>
   setTimeout(() => {
