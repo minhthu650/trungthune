@@ -192,18 +192,19 @@ setInterval(createGoldenFirework, 3000);
     },150);
 
     // ============= RAIN IMAGES =============
-  const imgSources = [
-  "anh/a1.jpg",
-  "anh/a2.jpg",
-  "anh/a3.jpg",
-  "anh/a4.jpg",
-  "anh/a5.jpg",
-  "anh/a6.jpg",
-  "anh/a7.jpg",
-  "anh/a8.jpg",
-  "anh/a9.jpg",
-  "anh/a10.jpg",
-  "anh/a11.jpg"
+// ============= RAIN IMAGES ============
+const imgSources = [
+  "./anh/a1.jpg",
+  "./anh/a2.jpg",
+  "./anh/a3.jpg",
+  "./anh/a4.jpg",
+  "./anh/a5.jpg",
+  "./anh/a6.jpg",
+  "./anh/a7.jpg",
+  "./anh/a8.jpg",
+  "./anh/a9.jpg",
+  "./anh/a10.jpg",
+  "./anh/a11.jpg"
 ];
 
 imgSources.forEach((src, index) => {
@@ -223,8 +224,9 @@ imgSources.forEach((src, index) => {
 });
   </script>
   <video id="bg-video" autoplay loop style="display:none">
-  <source src="ms/nh.mp4" type="video/mp4">
+  <source src="./ms/nh.mp4" type="video/mp4">
 </video>
+
 <script>
   window.addEventListener("load", () => {
     const video = document.getElementById("bg-video");
