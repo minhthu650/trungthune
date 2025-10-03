@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trung Thu Heart Show</title>
+  <style>
+    html, body { margin:0; height:100%; overflow:hidden; background:#000; }
+    #app { position:fixed; inset:0; }
+
+    .title {
+      position: fixed;
+      bottom: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: gold;
+      text-align: center;
+      text-shadow: 0 0 15px #fff, 0 0 25px gold, 0 0 50px orange;
+      opacity: 0;
+      animation: flicker 3s infinite alternate;
+      animation-delay: 2s;
+      z-index: 10;
+    }
+
+    @keyframes flicker {
+      0% {opacity:0.6; text-shadow: 0 0 10px gold, 0 0 20px orange;}
+      100% {opacity:1; text-shadow: 0 0 20px #fff, 0 0 40px gold;}
+    }
+
+    .heart {
+      position: absolute;
+      animation: fall 6s linear forwards;
+      pointer-events: none;
+      font-size: 20px;
+    }
+
+    .falling-img {
+      position: absolute;
+      animation: fall 7s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      0% {transform: translateY(-150px) rotate(0deg); opacity:1;}
+      100% {transform: translateY(100vh) rotate(360deg); opacity:0.5;}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="app"></canvas>
+  <div class="title">Trung Thu ♥ Chúc Cẩm Tiên luôn dễ thương xinh đẹp, vui vẻ</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    const canvas = document.getElementById("app");
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 6;
+
+    // ============= HEART 3D =============
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [], colors = [];
+
+    for (let i=0;i<6000;i++){
+      let t = Math.PI*2*Math.random();
+      let x = 16*Math.pow(Math.sin(t),3)/10;
+      let y = (13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))/10;
+      let z = (Math.random()-0.5)*0.8;
+      vertices.push(x,y,z);
+
+      let color = new THREE.Color(`hsl(${Math.random()*40+330},100%,60%)`);
+      colors.push(color.r, color.g, color.b);
+    }
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices,3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+
+    const material = new THREE.PointsMaterial({size:0.05, vertexColors:true, transparent:true, opacity:0.9});
+    const heart = new THREE.Points(geometry, material);
+    scene.add(heart);
+
+    // ============= FIREWORK =============
+    const fireworks = [];
+    function createFirework(){
+      const fireworkGeometry = new THREE.BufferGeometry();
+      const fVertices = [], fColors = [];
+      const particleCount = 120;
+
+      for(let i=0; i<particleCount; i++){
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 1.5 + 0.5;
+        const x = Math.cos(angle) * speed;
+        const y = Math.sin(angle) * speed;
+        const z = (Math.random()-0.5)*1.2;
+        fVertices.push(x,y,z);
+
+        const color = new THREE.Color(`hsl(${Math.random()*360},100%,60%)`);
+        fColors.push(color.r,color.g,color.b);
+      }
+
+      fireworkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(fVertices,3));
+      fireworkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(fColors,3));
+
+      const fireworkMaterial = new THREE.PointsMaterial({
+        size: 0.08,
+        vertexColors: true,
+        transparent: true,
+        opacity: 1
+      });
+
+      const firework = new THREE.Points(fireworkGeometry, fireworkMaterial);
+      firework.userData = {life:0};
+      scene.add(firework);
+      fireworks.push(firework);
+    }
+
+    setInterval(createFirework, 2000); // auto nổ pháo hoa mỗi 2s
+// ============= GOLDEN FIREWORK =============
+function createGoldenFirework(){
+  const fireworkGeometry = new THREE.BufferGeometry();
+  const fVertices = [], fColors = [];
+  const particleCount = 150; // nhiều hạt hơn cho đẹp
+
+  for(let i=0; i<particleCount; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 1.5 + 0.5;
+    const x = Math.cos(angle) * speed;
+    const y = Math.sin(angle) * speed;
+    const z = (Math.random()-0.5)*1.2;
+    fVertices.push(x,y,z);
+
+    // màu vàng lấp lánh: hsl vàng 50-60°, sáng 60-80%
+    const color = new THREE.Color(`hsl(${50+Math.random()*10},100%,${60+Math.random()*20}%)`);
+    fColors.push(color.r,color.g,color.b);
+  }
+
+  fireworkGeometry.setAttribute('position', new THREE.Float32BufferAttribute(fVertices,3));
+  fireworkGeometry.setAttribute('color', new THREE.Float32BufferAttribute(fColors,3));
+
+  const fireworkMaterial = new THREE.PointsMaterial({
+    size: 0.1,
+    vertexColors: true,
+    transparent: true,
+    opacity: 1
+  });
+
+  const firework = new THREE.Points(fireworkGeometry, fireworkMaterial);
+  firework.userData = {life:0};
+  scene.add(firework);
+  fireworks.push(firework);
+}
+
+// cho pháo hoa vàng nổ xen kẽ
+setInterval(createGoldenFirework, 3000);
+    // ============= ANIMATE LOOP =============
+    function animate(){
+      requestAnimationFrame(animate);
+
+      heart.rotation.y += 0.01;
+      heart.rotation.x += 0.003;
+      material.opacity = 0.7 + Math.sin(Date.now()*0.005)*0.3;
+
+      for(let i=fireworks.length-1; i>=0; i--){
+        const fw = fireworks[i];
+        fw.userData.life += 0.02;
+        fw.scale.multiplyScalar(1.02);
+        fw.material.opacity -= 0.01;
+        if(fw.material.opacity <= 0){
+          scene.remove(fw);
+          fireworks.splice(i,1);
+        }
+      }
+
+      renderer.render(scene,camera);
+    }
+    animate();
+
+    // ============= RAIN HEARTS =============
+    setInterval(()=>{
+      let heart = document.createElement("div");
+      heart.className="heart";
+      heart.innerHTML="❤️";
+      heart.style.left = Math.random()*95+"vw";
+      heart.style.top = "-50px";
+      heart.style.fontSize = (20+Math.random()*30)+"px";
+      heart.style.color = ["#ff66aa","#ff3333","#ff99cc","#ff66ff"][Math.floor(Math.random()*4)];
+      document.body.appendChild(heart);
+      setTimeout(()=>heart.remove(),6000);
+    },150);
+
+    // ============= RAIN IMAGES =============
+  const imgSources = [
+  "anh/a1.jpg",
+  "anh/a2.jpg",
+  "anh/a3.jpg",
+  "anh/a4.jpg",
+  "anh/a5.jpg",
+  "anh/a6.jpg",
+  "anh/a7.jpg",
+  "anh/a8.jpg",
+  "anh/a9.jpg",
+  "anh/a10.jpg",
+  "anh/a11.jpg"
+];
+
+imgSources.forEach((src, index) => {
+  for (let i = 0; i < 2; i++) {
+    setTimeout(() => {
+      let img = document.createElement("img");
+      img.className = "falling-img";
+      img.src = src;
+      img.style.left = Math.random() * 90 + "vw";
+      img.style.top = "-80px";
+      img.style.width = (40 + Math.random() * 50) + "px";
+      document.body.appendChild(img);
+      setTimeout(() => img.remove(), 7000);
+    }, (index * 2000) + (i * 10000)); 
+    // ảnh cách nhau 2s, mỗi lần lặp lại cách 10s
+  }
+});
+  </script>
+  <video id="bg-video" autoplay loop style="display:none">
+  <source src="ms/nh.mp4" type="video/mp4">
+</video>
+<script>
+  window.addEventListener("load", () => {
+    const video = document.getElementById("bg-video");
+    // Thử phát ngay khi load
+    video.play().catch(() => {
+      // Nếu bị chặn thì phát khi người dùng click
+      document.body.addEventListener("click", () => {
+        video.play();
+      }, {once:true});
+    });
+  });
+</script>
+
+<script>
+  setTimeout(() => {
+    document.querySelector(".title").style.display = "none";
+  }, 5000); // sau 5s ẩn đi
+</script>
+
+</body>
+</html>
