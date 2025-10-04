@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Trung Thu Heart Show ✨ WOW Edition</title>
+<title>Trung Thu Heart Show ✨ WOW Soft Edition</title>
 <style>
   html, body {
     margin: 0;
@@ -13,7 +13,6 @@
     font-family: 'Poppins', sans-serif;
   }
 
-  /* Intro */
   #intro {
     position: fixed;
     inset: 0;
@@ -43,45 +42,12 @@
     to { opacity: 1; }
   }
 
-  /* Canvas */
   #app {
     position: fixed;
     inset: 0;
     display: none;
   }
 
-  /* Lời chúc */
-  .title {
-    display: none;
-    position: fixed;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 38px;
-    font-weight: 700;
-    text-align: center;
-    color: #ffd700;
-    text-shadow: 0 0 20px #fff, 0 0 40px #ffcc00, 0 0 80px #ff6600;
-    white-space: nowrap;
-    background: linear-gradient(90deg, #ffcc00, #fff, #ff9900, #ffcc00);
-    background-size: 400%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 6s linear infinite, float 3s ease-in-out infinite;
-    z-index: 10;
-  }
-
-  @keyframes shine {
-    from { background-position: 0% 50%; }
-    to { background-position: 100% 50%; }
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, -10px); }
-  }
-
-  /* Tim & ảnh rơi */
   .heart, .falling-img {
     position: absolute;
     pointer-events: none;
@@ -106,7 +72,6 @@
     100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
   }
 
-  /* Sao nền */
   .star {
     position: absolute;
     background: white;
@@ -122,20 +87,16 @@
 </head>
 <body>
 
-<!-- Intro -->
 <div id="intro">
   <img src="anh/longden-removebg-preview.png" alt="Lồng đèn Trung Thu" id="moonCake">
 </div>
 
-<!-- Canvas -->
 <canvas id="app"></canvas>
 
-<!-- Nhạc nền -->
 <audio id="bg-music" loop>
   <source src="ms/nhac.mp3" type="audio/mp3">
 </audio>
 
-<!-- Three.js -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 <script>
@@ -145,7 +106,6 @@ const canvas = document.getElementById("app");
 const music = document.getElementById("bg-music");
 let audioCtx, analyser, dataArray, bufferLength;
 
-// Khi click vào ảnh
 moonCake.addEventListener("click", async () => {
   intro.style.opacity = "0";
   setTimeout(() => intro.style.display = "none", 1500);
@@ -153,13 +113,11 @@ moonCake.addEventListener("click", async () => {
 
   try {
     await music.play();
-    console.log("🎵 Nhạc phát thành công");
   } catch {
     alert("👉 Bấm OK để bật nhạc Trung Thu 🎶");
     await music.play();
   }
 
-  // Tạo AudioContext sau khi người dùng click
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   analyser = audioCtx.createAnalyser();
   const source = audioCtx.createMediaElementSource(music);
@@ -178,15 +136,18 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.z = 6;
 
+// 🌤 Ánh sáng môi trường dịu
+const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambient);
+
 // Background không gian
 const loader = new THREE.TextureLoader();
 loader.load("https://threejs.org/examples/textures/space/starfield.jpg", tex => { scene.background = tex; });
 
-// ❤️ WOW HEART EDITION
+// ❤️ WOW HEART SOFT EDITION
 const heartGroup = new THREE.Group();
 scene.add(heartGroup);
 
-// Tạo trái tim 3D nhiều lớp
 function createHeartLayer(pointCount, size, opacity, colorize = true) {
   const g = new THREE.BufferGeometry();
   const v = [], c = [];
@@ -197,8 +158,8 @@ function createHeartLayer(pointCount, size, opacity, colorize = true) {
     const z = (Math.random() - 0.5) * 1.5;
     v.push(x, y, z);
     const color = colorize
-      ? new THREE.Color(`hsl(${(t * 180 / Math.PI) % 360}, 100%, 60%)`)
-      : new THREE.Color(0xff3366);
+      ? new THREE.Color(`hsl(${(t * 180 / Math.PI) % 360}, 70%, 45%)`)
+      : new THREE.Color(0xff6688);
     c.push(color.r, color.g, color.b);
   }
   g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
@@ -214,83 +175,83 @@ function createHeartLayer(pointCount, size, opacity, colorize = true) {
   return new THREE.Points(g, m);
 }
 
-const heartCore = createHeartLayer(12000, 0.05, 0.95);
-const heartAura = createHeartLayer(4000, 0.08, 0.6);
-const heartGlow = createHeartLayer(1500, 0.12, 0.3, false);
+const heartCore = createHeartLayer(12000, 0.05, 0.9);
+const heartAura = createHeartLayer(4000, 0.08, 0.5);
+const heartGlow = createHeartLayer(1500, 0.12, 0.25, false);
 
 heartGroup.add(heartCore);
 heartGroup.add(heartAura);
 heartGroup.add(heartGlow);
 
-// Halo
+// Halo dịu
 const haloTexture = new THREE.TextureLoader().load("https://threejs.org/examples/textures/lensflare/lensflare0.png");
 const halo = new THREE.Sprite(new THREE.SpriteMaterial({
-  map: haloTexture, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending
+  map: haloTexture, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
 }));
-halo.scale.set(9, 9, 1);
+halo.scale.set(6.5, 6.5, 1);
 heartGroup.add(halo);
 
 // Orbit hạt bay quanh tim
 const orbitGroup = new THREE.Group();
 for (let i = 0; i < 80; i++) {
   const geom = new THREE.SphereGeometry(0.05, 8, 8);
-  const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+  const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
   const mesh = new THREE.Mesh(geom, mat);
   const radius = 2.5 + Math.random();
-  mesh.userData = { angle: Math.random() * Math.PI * 2, speed: 0.005 + Math.random() * 0.005, radius };
+  mesh.userData = { angle: Math.random() * Math.PI * 2, speed: 0.004 + Math.random() * 0.004, radius };
   mesh.position.set(Math.cos(mesh.userData.angle) * radius, Math.sin(mesh.userData.angle) * radius, 0);
   orbitGroup.add(mesh);
 }
 heartGroup.add(orbitGroup);
 
-// Spark hiệu ứng
+// Spark hiệu ứng nhẹ
 const sparks = [];
 function createSpark() {
   const g = new THREE.BufferGeometry();
   const v = [], c = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 25; i++) {
     v.push((Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2);
-    const col = new THREE.Color(`hsl(${Math.random() * 360}, 100%, 70%)`);
+    const col = new THREE.Color(`hsl(${Math.random() * 360}, 80%, 65%)`);
     c.push(col.r, col.g, col.b);
   }
   g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(c, 3));
-  const m = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 1 });
+  const m = new THREE.PointsMaterial({ size: 0.08, vertexColors: true, transparent: true, opacity: 0.8 });
   const s = new THREE.Points(g, m);
   s.userData = { life: 0 };
   scene.add(s);
   sparks.push(s);
 }
 
-// Cập nhật hiệu ứng WOW theo nhạc
+// Cập nhật hiệu ứng WOW theo nhạc (dịu)
 function wowHeartVisualizer() {
   requestAnimationFrame(wowHeartVisualizer);
   if (!analyser) return;
   analyser.getByteFrequencyData(dataArray);
   const avg = dataArray.reduce((a,b)=>a+b) / bufferLength / 255;
-  const scale = 1 + avg * 0.6;
+  const scale = 1 + avg * 0.4;
   heartGroup.scale.set(scale, scale, scale);
 
   const colorHue = (avg * 360) % 360;
-  const color = new THREE.Color(`hsl(${colorHue}, 100%, 60%)`);
+  const color = new THREE.Color(`hsl(${colorHue}, 65%, 45%)`);
   heartCore.material.color = heartAura.material.color = color;
   halo.material.color = color;
 
-  halo.material.opacity = 0.5 + avg * 0.7;
+  halo.material.opacity = 0.25 + avg * 0.25;
 
   orbitGroup.children.forEach(p => {
     p.userData.angle += p.userData.speed;
     p.position.x = Math.cos(p.userData.angle) * p.userData.radius;
     p.position.y = Math.sin(p.userData.angle) * p.userData.radius;
-    p.material.opacity = 0.5 + Math.sin(p.userData.angle * 3) * 0.5;
+    p.material.opacity = 0.4 + Math.sin(p.userData.angle * 3) * 0.3;
   });
 
-  if (avg > 0.35 && Math.random() > 0.7) createSpark();
+  if (avg > 0.4 && Math.random() > 0.8) createSpark();
 
   for (let i = sparks.length - 1; i >= 0; i--) {
     const s = sparks[i];
     s.userData.life += 0.03;
-    s.scale.multiplyScalar(1.05);
+    s.scale.multiplyScalar(1.04);
     s.material.opacity -= 0.03;
     if (s.material.opacity <= 0) {
       scene.remove(s);
@@ -303,13 +264,13 @@ wowHeartVisualizer();
 // Xoay tim
 function rotateHeartWOW() {
   requestAnimationFrame(rotateHeartWOW);
-  heartGroup.rotation.y += 0.01;
-  heartGroup.rotation.x += 0.005;
+  heartGroup.rotation.y += 0.008;
+  heartGroup.rotation.x += 0.004;
 }
 rotateHeartWOW();
 
 // 🌕 Mặt trăng
-const moon = new THREE.Mesh(new THREE.SphereGeometry(1,32,32), new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+const moon = new THREE.Mesh(new THREE.SphereGeometry(1,32,32), new THREE.MeshBasicMaterial({ color: 0xfff6cc }));
 moon.position.set(5,7,-10);
 scene.add(moon);
 
@@ -323,21 +284,20 @@ function createFirework(){
     const sp = Math.random()*1.5+0.5;
     const x = Math.cos(ang)*sp, y = Math.sin(ang)*sp, z = (Math.random()-0.5)*1.2;
     v.push(x,y,z);
-    const arr=["#ff3333","#ff66ff","#ffff66","#66ccff","#ff9933"];
+    const arr=["#ff9999","#ffcc66","#ffee99","#66ccff","#ff9966"];
     const col=new THREE.Color(arr[Math.floor(Math.random()*arr.length)]);
     c.push(col.r,col.g,col.b);
   }
   g.setAttribute('position', new THREE.Float32BufferAttribute(v,3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(c,3));
-  const m = new THREE.PointsMaterial({size:0.08, vertexColors:true, transparent:true, opacity:1});
+  const m = new THREE.PointsMaterial({size:0.07, vertexColors:true, transparent:true, opacity:0.9});
   const fw = new THREE.Points(g,m);
   fw.userData={life:0};
   scene.add(fw);
   fireworks.push(fw);
 }
-setInterval(createFirework, 2000);
+setInterval(createFirework, 2500);
 
-// 🌌 Render loop
 function animate(){
   requestAnimationFrame(animate);
   moon.rotation.y += 0.001;
@@ -355,7 +315,7 @@ function animate(){
 }
 animate();
 
-// 🌠 Sao nền
+// Sao nền
 for(let i=0;i<120;i++){
   const star=document.createElement("div");
   star.className="star";
@@ -372,7 +332,7 @@ setInterval(()=>{
   heartEl.innerHTML="❤️";
   heartEl.style.left=Math.random()*95+"vw";
   heartEl.style.fontSize=(20+Math.random()*25)+"px";
-  heartEl.style.color=["#ff66aa","#ff3333","#ff99cc","#ff66ff"][Math.floor(Math.random()*4)];
+  heartEl.style.color=["#ff6699","#ff3333","#ff99cc","#ff6666"][Math.floor(Math.random()*4)];
   document.body.appendChild(heartEl);
   setTimeout(()=>heartEl.remove(),6000);
 },180);
@@ -393,6 +353,5 @@ imgs.forEach((src,idx)=>{
   }
 });
 </script>
-
 </body>
 </html>
